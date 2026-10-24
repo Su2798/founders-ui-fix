@@ -1,0 +1,10 @@
+{
+  "description": "Explore Myanmar Founders, a professional community for entrepreneurs, with clear access to its services, resources, and opportunities across mobile and desktop.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
