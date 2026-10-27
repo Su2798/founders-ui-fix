@@ -97,7 +97,7 @@ export const founders = [
 ]
 
 export function DirectoryPage() {
-  const [query, setQuery] = useState("")
+  const [query, setQuery] = useState(() => new URLSearchParams(window.location.search).get("q") ?? "")
   const [tab, setTab] = useState<"founders" | "businesses">("founders")
   const [industry, setIndustry] = useState("")
   const [location, setLocation] = useState("")

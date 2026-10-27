@@ -111,7 +111,7 @@ export default function App() {
   else if (pathname === "/contact") page = <ContactPage />
   else if (pathname === "/about") page = <AboutPage />
   else if (pathname === "/verification") page = <VerificationPage />
-  else page = <HomePage />
+  else page = <HomePage dashboardHref={session ? getAccountPath(session, "dashboard") : "/login"} />
 
   if (accountRoute?.section === "dashboard" && session) {
     return <DashboardPage session={session} onLogout={logout} />
