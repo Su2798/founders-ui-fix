@@ -19,11 +19,11 @@ export type RegistrationData = {
 }
 
 export function LoginPage({ onSubmit, message }: { onSubmit: (event: FormEvent<HTMLFormElement>) => void; message: string }) {
-  return <section className="section login-page"><div className="login-content"><div className="login-heading"><span className="login-heading-icon"><Icon name="login" /></span><span className="section-label">Welcome back</span><h1>Sign in to access your account</h1></div><div className="login-panel"><form className="login-form" onSubmit={onSubmit}>
+  return <Localized><section className="section login-page"><div className="login-content"><div className="login-heading"><span className="login-heading-icon"><Icon name="login" /></span><span className="section-label">Welcome back</span><h1>Sign in to access your account</h1></div><div className="login-panel"><form className="login-form" onSubmit={onSubmit}>
     <label htmlFor="login-email">Email or phone number <span aria-hidden="true">*</span></label><div className="login-input-wrap"><Icon name="document" /><input id="login-email" name="email" type="text" autoComplete="username" placeholder="Enter your email or phone number" required /></div>
     <label htmlFor="login-password">Password <span aria-hidden="true">*</span></label><div className="login-input-wrap"><Icon name="shield" /><input id="login-password" name="password" type="password" autoComplete="current-password" placeholder="Enter your password" required /></div>
     <button className="login-submit" type="submit">Sign in</button>{message && <p className="login-message" role="status">{message}</p>}<p className="login-create">Don’t have an account? <AppLink href="/register">Create account</AppLink></p>
-  </form></div><p className="login-security">Your information is encrypted and secure.</p></div></section>
+  </form></div><p className="login-security">Your information is encrypted and secure.</p></div></section></Localized>
 }
 
 export function RegisterPage({ onSubmit, message }: { onSubmit: (data: RegistrationData) => void; message: string }) {

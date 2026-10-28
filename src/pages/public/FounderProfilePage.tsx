@@ -106,6 +106,7 @@ export function FounderProfilePage({ founderId }: { founderId: string }) {
       const profile = profileCopy[founder.id]
       const initials = founder.name.split(" ").map(part => part[0]).slice(0, 2).join("")
       return <>
+        <AppLink href="/directory" className="public-profile-back"><Icon name="arrow" />Back to directory</AppLink>
         <header className="public-founder-header">
           <div className="public-founder-identity">
             <span className="public-founder-avatar">{initials}</span>

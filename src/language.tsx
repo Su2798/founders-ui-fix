@@ -343,6 +343,19 @@ const burmese: Record<string, string> = {
   "Search founders, businesses, communities...":
     "တည်ထောင်သူများ၊ လုပ်ငန်းများနှင့် အသိုင်းအဝိုင်းများကို ရှာဖွေရန်...",
   "Search communities...": "အသိုင်းအဝိုင်းများကို ရှာဖွေရန်...",
+  "Welcome back": "ပြန်လည်ကြိုဆိုပါသည်",
+  "Sign in to access your account": "သင့်အကောင့်သို့ ဝင်ရောက်ရန်",
+  "Email or phone number": "အီးမေးလ် သို့မဟုတ် ဖုန်းနံပါတ်",
+  "Enter your email or phone number": "သင့်အီးမေးလ် သို့မဟုတ် ဖုန်းနံပါတ်ကို ရိုက်ထည့်ပါ",
+  Password: "စကားဝှက်",
+  "Enter your password": "သင့်စကားဝှက်ကို ရိုက်ထည့်ပါ",
+  "Sign in": "ဝင်ရောက်ရန်",
+  "Don’t have an account?": "အကောင့်မရှိသေးဘူးလား။",
+  "Create account": "အကောင့်ဖွင့်ရန်",
+  "Your information is encrypted and secure.":
+    "သင့်အချက်အလက်များကို ကုဒ်ဝှက်ထားပြီး လုံခြုံစွာ သိမ်းဆည်းထားပါသည်။",
+  "The email or password is incorrect.": "အီးမေးလ် သို့မဟုတ် စကားဝှက် မှားယွင်းနေပါသည်။",
+  "Account created. Sign in to continue.": "အကောင့်ဖွင့်ပြီးပါပြီ။ ဆက်လက်ရန် ဝင်ရောက်ပါ။",
   Personal: "ကိုယ်ရေးကိုယ်တာ",
   Business: "လုပ်ငန်း",
   Community: "အသိုင်းအဝိုင်း",
@@ -451,6 +464,63 @@ const burmese: Record<string, string> = {
     "လုပ်ငန်းကဏ္ဍအသီးသီးမှ လက်တွေ့အသုံးဝင်သော အကြံဉာဏ်များနှင့် ဥပမာများကို ဖလှယ်ပါ။",
   "Build products, platforms, and teams in Myanmar's technology ecosystem.":
     "မြန်မာ့နည်းပညာကဏ္ဍတွင် ထုတ်ကုန်များ၊ ပလက်ဖောင်းများနှင့် အဖွဲ့များကို တည်ဆောက်ပါ။",
+  "Myanmar Tech Founders": "မြန်မာ့နည်းပညာ တည်ထောင်သူများ",
+  "Women Founders Myanmar": "မြန်မာအမျိုးသမီး တည်ထောင်သူများ",
+  "Myanmar Startup Operators": "မြန်မာစတားတပ် လုပ်ငန်းလည်ပတ်သူများ",
+  "Myanmar E-commerce Builders": "မြန်မာအွန်လိုင်း ကုန်သွယ်ရေး တည်ဆောက်သူများ",
+  "Strong stores and brands through operations and customer discussions.":
+    "လုပ်ငန်းလည်ပတ်မှုနှင့် ဖောက်သည်ဆွေးနွေးမှုများမှတစ်ဆင့် ခိုင်မာသော ဆိုင်များနှင့် အမှတ်တံဆိပ်များ တည်ဆောက်ပါ။",
+  "A focused group for founders in payments and inclusive finance.":
+    "ငွေပေးချေမှုနှင့် အားလုံးပါဝင်နိုင်သော ဘဏ္ဍာရေးကဏ္ဍရှိ တည်ထောင်သူများအတွက် အထူးအာရုံစိုက်ထားသော အဖွဲ့။",
+  "Back to communities": "အသိုင်းအဝိုင်းများသို့ ပြန်သွားရန်",
+  "Founder community": "တည်ထောင်သူ အသိုင်းအဝိုင်း",
+  "Join community": "အသိုင်းအဝိုင်းသို့ ဝင်ရန်",
+  "About this community": "ဤအသိုင်းအဝိုင်းအကြောင်း",
+  "Build your network with people who understand the journey.":
+    "သင့်ခရီးလမ်းကို နားလည်သူများနှင့်အတူ ကွန်ရက်တည်ဆောက်ပါ။",
+  "Share lessons, ask questions, and connect with founders working through similar challenges.":
+    "သင်ခန်းစာများ မျှဝေပါ၊ မေးခွန်းများ မေးပါ၊ အလားတူ စိန်ခေါ်မှုများကို ဖြတ်သန်းနေသော တည်ထောင်သူများနှင့် ချိတ်ဆက်ပါ။",
+  "The conversation": "ဆွေးနွေးမှုများ",
+  "Recent discussions": "လတ်တလော ဆွေးနွေးမှုများ",
+  "Start a discussion": "ဆွေးနွေးမှု စတင်ရန်",
+  "What our first 10 customers taught us": "ပထမဆုံး ဖောက်သည် ၁၀ ဦးထံမှ သင်ယူခဲ့ရသည်များ",
+  "The best feedback came from watching how people actually used what we built.":
+    "ကျွန်ုပ်တို့ တည်ဆောက်ထားသည်များကို လူများ အမှန်တကယ် အသုံးပြုပုံကို ကြည့်ရှုခြင်းမှ အကောင်းဆုံး တုံ့ပြန်ချက်များ ရရှိခဲ့သည်။",
+  "How are founders handling logistics outside Yangon?":
+    "ရန်ကုန်ပြင်ပရှိ ပို့ဆောင်ရေးလုပ်ငန်းများကို တည်ထောင်သူများ မည်သို့ ကိုင်တွယ်နေကြပါသလဲ။",
+  "Would love to hear what has worked for teams serving customers across regions.":
+    "ဒေသအသီးသီးရှိ ဖောက်သည်များကို ဝန်ဆောင်မှုပေးနေသော အဖွဲ့များအတွက် အဆင်ပြေခဲ့သည်များကို မျှဝေပေးစေလိုပါသည်။",
+  "Recommendations for local payment integrations":
+    "ဒေသတွင်း ငွေပေးချေမှုစနစ် ချိတ်ဆက်မှုများအတွက် အကြံပြုချက်များ",
+  "Looking for reliable options that are easy for small teams to manage.":
+    "အဖွဲ့ငယ်များ စီမံရလွယ်ကူပြီး ယုံကြည်စိတ်ချရသော ရွေးချယ်စရာများကို ရှာဖွေနေပါသည်။",
+  "2h": "၂ နာရီ",
+  "4h": "၄ နာရီ",
+  Yesterday: "မနေ့က",
+  replies: "ပြန်ကြားချက်",
+  "People to know": "သိထားသင့်သူများ",
+  "Community members": "အသိုင်းအဝိုင်းဝင်များ",
+  "Founder · Myaung Logistics": "တည်ထောင်သူ · မြောင်း လော့ဂျစ်စတစ်",
+  "Founder · Htet Studio": "တည်ထောင်သူ · ထက် စတူဒီယို",
+  "Explore members": "အသိုင်းအဝိုင်းဝင်များကို ကြည့်ရန်",
+  "A good place to start": "စတင်ရန် သင့်တော်သောနေရာ",
+  "Make the conversation useful.": "ဆွေးနွေးမှုကို အကျိုးရှိစေပါ။",
+  "Share what you have learned, ask clear questions, and be generous with your experience.":
+    "သင်ယူရရှိခဲ့သည်များကို မျှဝေပါ၊ ရှင်းလင်းသော မေးခွန်းများ မေးပါ၊ သင့်အတွေ့အကြုံများကို ရက်ရောစွာ မျှဝေပါ။",
+  "Share something with the community...": "အသိုင်းအဝိုင်းနှင့် မျှဝေလိုသည်များကို ရေးသားပါ...",
+  "Add a thoughtful comment...": "အကျိုးရှိသော မှတ်ချက်တစ်ခု ရေးသားပါ...",
+  "Add an image": "ပုံတစ်ပုံ ထည့်ရန်",
+  "Please choose an image file.": "ကျေးဇူးပြု၍ ပုံဖိုင်တစ်ခုကို ရွေးပါ။",
+  "The image could not be loaded. Please try another file.":
+    "ပုံကို ဖွင့်၍မရပါ။ အခြားဖိုင်တစ်ခုကို ရွေးကြည့်ပါ။",
+  "Community discussion": "အသိုင်းအဝိုင်း ဆွေးနွေးချက်",
+  "Just now": "ယခုလေးတင်",
+  "Image attached to community post": "အသိုင်းအဝိုင်း ပို့စ်တွင် ပူးတွဲထားသောပုံ",
+  "This was true for us too. Observation gave us much better answers than surveys.":
+    "ကျွန်ုပ်တို့အတွက်လည်း ထိုအတိုင်းပါပဲ။ လက်တွေ့လေ့လာခြင်းက စစ်တမ်းများထက် ပိုမိုကောင်းမွန်သော အဖြေများ ရရှိစေခဲ့သည်။",
+  Reply: "ပြန်ကြားရန်",
+  "Community not found": "အသိုင်းအဝိုင်းကို မတွေ့ပါ",
+  "This community is unavailable.": "ဤအသိုင်းအဝိုင်းကို လက်ရှိကြည့်ရှု၍ မရနိုင်ပါ။",
   "Connections, mentorship, and peer support for women founders.":
     "အမျိုးသမီးတည်ထောင်သူများအတွက် ချိတ်ဆက်မှု၊ လမ်းညွှန်မှုနှင့် အပြန်အလှန် ပံ့ပိုးမှု။",
   "Practical lessons for early-stage operations and growth.":

@@ -1,10 +1,14 @@
-import { FormEvent, useState } from "react"
+import { useState } from "react"
 import type { AuthSession } from "../../components"
 import { AppLink, Icon } from "../../site"
 import { LanguageSwitch, Localized } from "../../language"
 import { getAccountPath } from "../../accountRoutes"
+import { PostComposer } from "./PostComposer"
+import { PostDeleteConfirm } from "./PostDeleteConfirm"
+import { POSTS_STORAGE_KEY, readStoredPosts, writeStoredPosts, type PostDraft } from "./postsStorage"
+import { communities, readJoinedCommunityIds } from "./communityStorage"
 
-const DEFAULT_POST = {
+const DEFAULT_POST: PostDraft = {
   community: "Yangon Founders",
   title: "What our first 10 customers taught us",
   body: "The strongest lesson was to watch how the work actually happens, not just ask what feature people want. Three of our early assumptions disappeared after sitting with operations teams for an afternoon.",
@@ -28,27 +32,81 @@ const accountRouteByLabel = {
 } as const
 
 export function PostsPage({ session, onLogout }: { session: AuthSession; onLogout: () => void }) {
-  const [menuOpen, setMenuOpen] = useState(false)
+  const [menuOpen, setMenuOpen] = useState<number | null>(null)
   const [composerOpen, setComposerOpen] = useState(new URLSearchParams(window.location.search).get("compose") === "1")
-  const [message, setMessage] = useState("")
-  const [posts, setPosts] = useState(() => {
-    try { return JSON.parse(localStorage.getItem("founders:demo:posts") || "null") ?? [DEFAULT_POST] }
-    catch { return [DEFAULT_POST] }
+  const [editingIndex, setEditingIndex] = useState<number | null>(null)
+  const [joinedCommunityState] = useState(() => {
+    try {
+      return { ids: readJoinedCommunityIds(session.accountId), error: "" }
+    } catch {
+      return { ids: [] as string[], error: "Joined communities could not be loaded. Please reload and try again." }
+    }
   })
+  const [initialPostState] = useState(() => {
+    try {
+      return {
+        posts: localStorage.getItem(POSTS_STORAGE_KEY) === null
+          ? [{ ...DEFAULT_POST, id: "demo-default-post", authorName: session.name, authorInitials: session.name.slice(0, 1).toUpperCase(), authorAccountId: session.accountId }]
+          : readStoredPosts(),
+        error: "",
+      }
+    }
+    catch {
+      return { posts: [DEFAULT_POST], error: "Saved posts could not be loaded." }
+    }
+  })
+  const [deleteIndex, setDeleteIndex] = useState<number | null>(null)
+  const [message, setMessage] = useState(initialPostState.error)
+  const [posts, setPosts] = useState<PostDraft[]>(initialPostState.posts)
+  const joinedCommunityNames = communities.filter(community => joinedCommunityState.ids.includes(community.id)).map(community => community.name)
   const initials = session.name.split(/\s+/).filter(Boolean).slice(0, 2).map(word => word[0]).join("").toUpperCase()
 
-  function savePost(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    const form = new FormData(event.currentTarget)
-    const title = String(form.get("title") ?? "").trim()
-    const body = String(form.get("body") ?? "").trim()
-    const community = String(form.get("community") ?? "").trim()
-    if (!title || !body) return
-    const next = [{ community, title, body }, ...posts]
+  function savePost(draft: PostDraft) {
+    const isEditingSameCommunity = editingIndex !== null && posts[editingIndex]?.community === draft.community
+    try {
+      const currentJoinedIds = readJoinedCommunityIds(session.accountId)
+      const selectedCommunity = communities.find(community => community.name === draft.community)
+      if (!selectedCommunity || (!currentJoinedIds.includes(selectedCommunity.id) && !isEditingSameCommunity)) {
+        setMessage("Join the selected community before creating a post.")
+        return
+      }
+    } catch {
+      setMessage("Joined communities could not be verified. Please reload and try again.")
+      return
+    }
+
+    const savedDraft = editingIndex === null
+      ? { ...draft, id: `post-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, authorName: session.name, authorInitials: initials, authorAccountId: session.accountId }
+      : { ...posts[editingIndex], ...draft }
+    const next = editingIndex === null
+      ? [savedDraft, ...posts]
+      : posts.map((post, index) => index === editingIndex ? savedDraft : post)
+    try {
+      writeStoredPosts(next)
+    } catch {
+      setMessage("Post could not be saved. Try removing the image or choosing a smaller one.")
+      return
+    }
     setPosts(next)
-    localStorage.setItem("founders:demo:posts", JSON.stringify(next))
     setComposerOpen(false)
-    setMessage("Post created.")
+    setEditingIndex(null)
+    setMenuOpen(null)
+    setMessage(editingIndex === null ? "Post created." : "Post updated.")
+  }
+
+  function deletePost() {
+    if (deleteIndex === null) return
+    const next = posts.filter((_, index) => index !== deleteIndex)
+    try {
+      writeStoredPosts(next)
+    } catch {
+      setMessage("Post could not be deleted. Please try again.")
+      setDeleteIndex(null)
+      return
+    }
+    setPosts(next)
+    setDeleteIndex(null)
+    setMessage("Post deleted.")
   }
 
   return <Localized><section className="dashboard posts-dashboard">
@@ -69,18 +127,29 @@ export function PostsPage({ session, onLogout }: { session: AuthSession; onLogou
       </header>
 
       <main className="dashboard-content posts-content">
-        <header className="posts-heading"><div><span>Content</span><h1>My Posts</h1><p>Manage the knowledge and questions you have shared with founder communities.</p></div><button type="button" className="dashboard-primary" onClick={() => setComposerOpen(true)}><span>+</span> Create post</button></header>
-        {message && <p className="posts-status" role="status">{message}</p>}
+        <header className="posts-heading"><div><span>Content</span><h1>My Posts</h1><p>Manage the knowledge and questions you have shared with founder communities.</p></div><button type="button" className="dashboard-primary" disabled={!joinedCommunityNames.length} onClick={() => { setEditingIndex(null); setComposerOpen(true) }}><span>+</span> Create post</button></header>
+        {(message || joinedCommunityState.error) && <p className="posts-status" role={joinedCommunityState.error ? "alert" : "status"}>{joinedCommunityState.error || message}</p>}
+        {!joinedCommunityNames.length && !joinedCommunityState.error && <p className="posts-status">Join a community before creating a post.</p>}
         <div className="posts-stats"><div><strong>{posts.length}</strong><span>posts</span></div><div><strong>34</strong><span>helpful reactions</span></div><div><strong>{posts.length}</strong><span>comments</span></div></div>
-        <div className="post-list">{posts.map((post: typeof DEFAULT_POST, index: number) => <article className="post-card" key={`${post.title}-${index}`}>
-          <div className="post-card-header"><div className="post-author"><span className="dashboard-avatar">{initials}</span><div><strong>{session.name}</strong><small>{post.community} · 2h</small></div></div><div className="post-menu-wrap"><button type="button" aria-label="Post actions" onClick={() => setMenuOpen(menuOpen === index ? false : index)}>•••</button>{menuOpen === index && <div className="post-menu"><button type="button" onClick={() => setComposerOpen(true)}>Edit</button><button type="button" onClick={() => { const next = posts.filter((_, itemIndex) => itemIndex !== index); setPosts(next); localStorage.setItem("founders:demo:posts", JSON.stringify(next)); setMenuOpen(false) }}>Delete</button></div>}</div></div>
+        <div className="post-list">{posts.map((post, index) => <article className="post-card" key={`${post.title}-${index}`}>
+          <div className="post-card-header"><div className="post-author"><span className="dashboard-avatar">{post.authorInitials ?? initials}</span><div><strong>{post.authorName ?? session.name}</strong><small>{post.community} · 2h</small></div></div><div className="post-menu-wrap"><button type="button" aria-label="Post actions" onClick={() => setMenuOpen(menuOpen === index ? null : index)}>•••</button>{menuOpen === index && <div className="post-menu"><button type="button" onClick={() => { setEditingIndex(index); setComposerOpen(true); setMenuOpen(null) }}>Edit</button><button type="button" onClick={() => { setDeleteIndex(index); setMenuOpen(null) }}>Delete</button></div>}</div></div>
           <span className="post-community">{post.community}</span><h2>{post.title}</h2><p>{post.body}</p>
+          {post.image && <img className="post-card-image" src={post.image} alt="Image attached to post" />}
           <div className="post-helpful"><span><b>{index === 0 ? 34 : 6}</b> helpful</span><span>{index === 0 ? 1 : 0} comments</span></div>
-          <div className="post-actions"><button type="button"><Icon name="sparkles" />Helpful</button><button type="button"><Icon name="document" />Comment</button></div>
+          <div className="post-actions"><button type="button"><Icon name="heart" />Helpful</button><button type="button"><Icon name="comment" />Comment</button></div>
         </article>)}</div>
       </main>
     </div>
 
-    {composerOpen && <div className="post-modal-backdrop" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) setComposerOpen(false) }}><section className="post-modal" role="dialog" aria-modal="true" aria-labelledby="create-post-title"><header><div><span>Community post</span><h2 id="create-post-title">Create post</h2></div><button type="button" aria-label="Close" onClick={() => setComposerOpen(false)}><Icon name="x" /></button></header><form onSubmit={savePost}><label htmlFor="post-community">Community</label><select id="post-community" name="community" defaultValue="Yangon Founders"><option>Yangon Founders</option><option>Myanmar Tech Founders</option><option>Women Founders Myanmar</option></select><label htmlFor="post-title">Title</label><input id="post-title" name="title" required maxLength={100} placeholder="What would you like to discuss?" /><label htmlFor="post-body">Post</label><textarea id="post-body" name="body" required rows={7} placeholder="Share an insight, question, or experience..." /><div className="post-modal-actions"><button type="button" onClick={() => setComposerOpen(false)}>Cancel</button><button type="submit" className="dashboard-primary">Publish post</button></div></form></section></div>}
+    {composerOpen && <PostComposer
+      key={editingIndex === null ? "new-post" : `edit-post-${editingIndex}`}
+      initialValues={editingIndex === null ? undefined : posts[editingIndex]}
+      communityOptions={joinedCommunityNames}
+      allowInitialCommunity={editingIndex !== null}
+      onSubmit={savePost}
+      onClose={() => { setComposerOpen(false); setEditingIndex(null) }}
+      submitLabel={editingIndex === null ? "Post" : "Save changes"}
+    />}
+    {deleteIndex !== null && <PostDeleteConfirm onCancel={() => setDeleteIndex(null)} onConfirm={deletePost} />}
   </section></Localized>
 }
