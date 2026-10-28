@@ -11,12 +11,12 @@ const communities = [
   { initials: "TF", name: "Myanmar Tech Founders", category: "Industry network", members: "176 members", description: "A focused group discussing technology, teams, and access." },
 ]
 
-export function HomePage({ dashboardHref }: { dashboardHref: string }) {
+export function HomePage() {
   return <Localized><main className="home-page">
     <section className="hero"><div className="hero-pattern" aria-hidden="true" /><div className="shell hero-grid">
       <div className="hero-copy"><div className="eyebrow"><Icon name="sparkles" className="size-4" />Trusted by Myanmar’s founder community</div>
         <h1>Your source for <span>verified</span> business founders</h1><p>Discover authentic entrepreneurial profiles backed by rigorous verification. Connect with credible business leaders you can trust.</p>
-        <div className="hero-actions"><PrimaryLink href="/directory">Browse directory</PrimaryLink><AppLink href="/verification" className="text-link">How verification works <Icon name="arrow" /></AppLink></div>
+        <div className="hero-actions"><PrimaryLink href="/founder-registration">Become a founder</PrimaryLink><AppLink href="/business-registration" className="text-link">Business registration<Icon name="arrow" /></AppLink></div>
         <div className="trust-row"><div className="avatar-stack" aria-hidden="true"><span>MT</span><span>MH</span><span>NW</span><span>+64</span></div><p><b>67+ verified founders</b>Growing every week across Myanmar</p></div>
       </div>
       <div className="hero-visual" aria-label="Verified founder network"><div className="network-card network-main"><div className="network-icon"><Icon name="shield" /></div><strong>Verified founder network</strong><span>Authentic profiles. Trusted connections.</span><div className="network-stats"><div><b>67+</b><small>Founders</small></div><div><b>4-step</b><small>Verification</small></div></div></div><div className="network-card floating-card top-card"><Icon name="check" /><span><b>Manually reviewed</b><small>For credibility</small></span></div><div className="network-card floating-card bottom-card"><Icon name="building" /><span><b>Real businesses</b><small>Registry checked</small></span></div></div>
@@ -104,7 +104,7 @@ export function HomePage({ dashboardHref }: { dashboardHref: string }) {
     <section className="home-bottom-cta">
       <div className="shell home-bottom-cta-inner">
         <div><h2>Build your founder presence. Find your people.</h2><p>Create a profile, introduce your business, and join conversations that move work forward.</p></div>
-        <div><AppLink href="/register" className="button button-dark">Create your founder profile<Icon name="arrow" /></AppLink><AppLink href={dashboardHref} className="home-preview-link">Preview dashboard</AppLink></div>
+        <div><AppLink href="/founder-registration" className="button button-dark">Become a founder<Icon name="arrow" /></AppLink><AppLink href="/business-registration" className="home-preview-link">Business registration</AppLink><AppLink href="/directory" className="home-preview-link">Explore the directory</AppLink></div>
       </div>
     </section>
   </main></Localized>

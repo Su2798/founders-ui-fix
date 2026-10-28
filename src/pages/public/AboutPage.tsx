@@ -9,5 +9,9 @@ export function AboutPage() {
     ["database", "Registry check", "Relevant public and official records are reviewed for consistency."],
     ["shield", "Final approval", "Our team conducts a final review before publishing a verified profile."],
   ].map(([icon, title, text]) => <article className="verification-item" key={title}><span className="step-number">Verified</span><div className="verification-icon"><Icon name={icon as "document"} /></div><h3>{title}</h3><p>{text}</p></article>)}</div></div></section>
-  <section className="section about-partners"><div className="shell"><div className="section-heading centered"><span className="section-label">Growing together</span><h2>Trusted by leading organizations</h2></div><div className="partner-grid">{[1,2,3,4].map(partner => <div className="partner-card" key={partner}>Partner logo {partner}</div>)}</div></div></section></></Localized>
+  <section className="section about-partners"><div className="shell"><div className="section-heading centered"><span className="section-label">Growing together</span><h2>Trusted by leading organizations</h2></div><div className="partner-grid">
+    <div className="partner-card"><img src="/partner-logos/best-deal-partnership.png" alt="Best Deal Partnership" /></div>
+    <div className="partner-card"><img src="/partner-logos/usd-partners.png" alt="USD Partners" /></div>
+    <div className="partner-card"><img src="/partner-logos/antin-infrastructure-partners.png" alt="Antin Infrastructure Partners" /></div>
+  </div></div></section></></Localized>
 }

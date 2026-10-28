@@ -96,7 +96,7 @@ export const profileCopy: Record<string, { role: string; location: string; story
   },
 }
 
-export function FounderProfilePage({ founderId }: { founderId: string }) {
+export function FounderProfilePage({ founderId, canParticipate }: { founderId: string; canParticipate: boolean }) {
   const founder = founders.find(item => item.id === founderId)
   const [connected, setConnected] = useState(false)
   const [helpful, setHelpful] = useState(false)
@@ -118,9 +118,11 @@ export function FounderProfilePage({ founderId }: { founderId: string }) {
               <div className="public-founder-meta"><span><Icon name="building" />{profile.location}</span><span><Icon name="document" />{founder.industry}</span></div>
             </div>
           </div>
-          <button type="button" className={`public-founder-connect${connected ? " is-connected" : ""}`} onClick={() => setConnected(value => !value)}>
-            {connected && <Icon name="check" />}{connected ? "Connected" : "Connect"}
-          </button>
+          {canParticipate
+            ? <button type="button" className={`public-founder-connect${connected ? " is-connected" : ""}`} onClick={() => setConnected(value => !value)}>
+              {connected && <Icon name="check" />}{connected ? "Connected" : "Connect"}
+            </button>
+            : <AppLink href="/founder-registration" className="public-founder-connect">Become a founder</AppLink>}
         </header>
 
         <div className="public-founder-layout">
@@ -144,7 +146,9 @@ export function FounderProfilePage({ founderId }: { founderId: string }) {
                 <h3>{profile.post}</h3>
                 <p>{profile.postExcerpt}</p>
                 <footer><span>Shared with the founder community</span><span>Public post</span></footer>
-                <div className="public-founder-post-actions"><button type="button" className={helpful ? "is-helpful" : ""} onClick={() => setHelpful(value => !value)}><Icon name="check" />{helpful ? "Marked helpful" : "Helpful"}</button><a href="/login"><Icon name="document" />Comment</a></div>
+                <div className="public-founder-post-actions">{canParticipate
+                  ? <><button type="button" className={helpful ? "is-helpful" : ""} onClick={() => setHelpful(value => !value)}><Icon name="check" />{helpful ? "Marked helpful" : "Helpful"}</button><AppLink href="/founder-registration"><Icon name="document" />Comment</AppLink></>
+                  : <AppLink href="/founder-registration"><Icon name="check" />Become a founder to respond</AppLink>}</div>
               </article>
             </section>
           </div>

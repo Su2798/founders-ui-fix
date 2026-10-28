@@ -5,6 +5,17 @@ import type { AuthSession } from "../../components"
 import { getAccountPath } from "../../accountRoutes"
 import { AccountSearch } from "./AccountSearch"
 
+const recentDiscussions = [
+  ["1", "TA", "What our first 10 customers taught us", "Thiri Aung · 2h", "24"],
+  ["4", "KH", "How are founders handling logistics outside Yangon?", "Kaung Htet · 2h", "21"],
+  ["6", "HH", "Recommendations for local payment integrations", "Hnin Htet · Yesterday", "17"],
+] as const
+const networkCommunities = [
+  ["1", "YF", "Yangon Founders"],
+  ["2", "MY", "Myanmar Tech Founders"],
+  ["3", "WF", "Women Founders Myanmar"],
+] as const
+
 const navigation = [
   ["Personal", [
     ["database", "Overview", true],
@@ -107,22 +118,18 @@ export function DashboardPage({ session, onLogout }: { session: AuthSession; onL
 
           <section className="dashboard-community">
             <div className="community-feed">
-              <header><h2>From your communities</h2><button type="button">View all</button></header>
+              <header><h2>From your communities</h2><AppLink href={getAccountPath(session, "communities")}>View all</AppLink></header>
               <div className="community-post-list">
-                {[
-                  ["TA", "What our first 10 customers taught us", "Thiri Aung · 2h", "24"],
-                  ["KH", "How are founders handling logistics outside Yangon?", "Kaung Htet · 2h", "21"],
-                  ["HH", "Recommendations for local payment integrations", "Hnin Htet · Yesterday", "17"],
-                ].map(([avatar, title, author, replies]) => (
-                  <article className="community-post" key={title}><span className="dashboard-avatar">{avatar}</span><div><strong>{title}</strong><small>{author}</small></div><span>{replies}</span></article>
+                {recentDiscussions.map(([communityId, avatar, title, author, replies]) => (
+                  <AppLink className="community-post" href={`${getAccountPath(session, "communities")}/${communityId}`} key={title}><span className="dashboard-avatar">{avatar}</span><div><strong>{title}</strong><small>{author}</small></div><span>{replies}</span></AppLink>
                 ))}
               </div>
             </div>
             <div className="dashboard-network">
-              <header><h2>Your network</h2><button type="button" aria-label="More network options">•••</button></header>
+              <header><h2>Your network</h2><AppLink href={getAccountPath(session, "communities")} aria-label="View all communities">•••</AppLink></header>
               <div className="network-counts"><div><strong>4</strong><small>Communities</small></div><div><strong>1</strong><small>Events followed</small></div><div><strong>3</strong><small>Upcoming</small></div></div>
               <div className="network-people">
-                {["YF Yangon Founders", "MY Myanmar Tech Founders", "WF Women Founders Myanmar"].map(person => <button type="button" key={person}><span>{person.slice(0, 2)}</span><strong>{person.slice(3)}</strong><Icon name="arrow" /></button>)}
+                {networkCommunities.map(([communityId, initials, name]) => <AppLink href={`${getAccountPath(session, "communities")}/${communityId}`} key={communityId}><span>{initials}</span><strong>{name}</strong><Icon name="arrow" /></AppLink>)}
               </div>
             </div>
           </section>

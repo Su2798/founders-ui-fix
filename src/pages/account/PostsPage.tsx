@@ -33,6 +33,7 @@ const accountRouteByLabel = {
 
 export function PostsPage({ session, onLogout }: { session: AuthSession; onLogout: () => void }) {
   const [menuOpen, setMenuOpen] = useState<number | null>(null)
+  const [mobileNavOpen, setMobileNavOpen] = useState(false)
   const [composerOpen, setComposerOpen] = useState(new URLSearchParams(window.location.search).get("compose") === "1")
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
   const [joinedCommunityState] = useState(() => {
@@ -118,16 +119,24 @@ export function PostsPage({ session, onLogout }: { session: AuthSession; onLogou
       })}</div>)}</nav>
       <button type="button" className="dashboard-account" onClick={onLogout}><span className="dashboard-avatar">{initials}</span><span><strong>{session.name}</strong><small>{session.email}</small></span></button>
     </aside>
+    {mobileNavOpen && <>
+      <button type="button" className="dashboard-mobile-menu-backdrop" aria-label="Close account navigation" onClick={() => setMobileNavOpen(false)} />
+      <div id="posts-mobile-navigation" className="dashboard-mobile-menu" role="dialog" aria-modal="true" aria-label="Account navigation">
+        <header><AppLink href={getAccountPath(session, "dashboard")} className="dashboard-brand"><span className="dashboard-brand-mark">F</span><span>Founders</span></AppLink><button type="button" aria-label="Close account navigation" onClick={() => setMobileNavOpen(false)}><Icon name="x" /></button></header>
+        <nav className="dashboard-mobile-nav" aria-label="Account navigation">{navigation.map(([label, items]) => <div className="dashboard-nav-group" key={label}><span className="dashboard-nav-label">{label}</span>{items.map(([icon, itemLabel]) => <AppLink href={getAccountPath(session, accountRouteByLabel[itemLabel])} key={itemLabel} className={`dashboard-nav-item${itemLabel === "My Posts" ? " active" : ""}`} onClick={() => setMobileNavOpen(false)}><Icon name={icon} /><span>{itemLabel}</span>{itemLabel === "Messages" && <b>3</b>}</AppLink>)}</div>)}</nav>
+        <button type="button" className="dashboard-mobile-signout" onClick={onLogout}>Sign out</button>
+      </div>
+    </>}
 
     <div className="dashboard-main">
       <header className="dashboard-topbar">
-        <button type="button" className="dashboard-menu" aria-label="Open account navigation"><Icon name="menu" /></button>
+        <button type="button" className="dashboard-menu" aria-label="Open account navigation" aria-expanded={mobileNavOpen} aria-controls="posts-mobile-navigation" onClick={() => setMobileNavOpen(true)}><Icon name="menu" /></button>
         <div className="dashboard-search"><Icon name="search" /><input aria-label="Search founders, businesses and communities" placeholder="Search founders, businesses, communities..." /><span className="dashboard-search-shortcut">⌘ K</span></div>
         <div className="dashboard-top-actions"><button type="button" aria-label="Notifications"><Icon name="sparkles" /></button><LanguageSwitch compact /><span className="dashboard-top-avatar">{initials.slice(0, 1)}M</span><span className="dashboard-top-name">{session.name.split(" ")[0]}</span><button type="button" className="dashboard-avatar small" aria-label="Open account menu">{initials}</button></div>
       </header>
 
       <main className="dashboard-content posts-content">
-        <header className="posts-heading"><div><span>Content</span><h1>My Posts</h1><p>Manage the knowledge and questions you have shared with founder communities.</p></div><button type="button" className="dashboard-primary" disabled={!joinedCommunityNames.length} onClick={() => { setEditingIndex(null); setComposerOpen(true) }}><span>+</span> Create post</button></header>
+        <header className="posts-heading"><div><span>Content</span><h1>My Posts</h1><p>Manage the knowledge and questions you have shared with founder communities.</p></div><button type="button" className="dashboard-primary" aria-label="Create post" disabled={!joinedCommunityNames.length} onClick={() => { setEditingIndex(null); setComposerOpen(true) }}><span aria-hidden="true">+</span><span className="dashboard-primary-label">Create post</span></button></header>
         {(message || joinedCommunityState.error) && <p className="posts-status" role={joinedCommunityState.error ? "alert" : "status"}>{joinedCommunityState.error || message}</p>}
         {!joinedCommunityNames.length && !joinedCommunityState.error && <p className="posts-status">Join a community before creating a post.</p>}
         <div className="posts-stats"><div><strong>{posts.length}</strong><span>posts</span></div><div><strong>34</strong><span>helpful reactions</span></div><div><strong>{posts.length}</strong><span>comments</span></div></div>

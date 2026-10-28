@@ -2,12 +2,14 @@ import { useState, type FormEvent } from "react"
 import type { AuthSession } from "../../components"
 import { AppLink, Icon } from "../../site"
 import { Localized } from "../../language"
+import { founders } from "../public/DirectoryPage"
 import { MemberShell } from "./MemberShell"
 import { getAccountPath } from "../../accountRoutes"
 import { PostComposer } from "./PostComposer"
 import { PostDeleteConfirm } from "./PostDeleteConfirm"
 import { readStoredPosts, writeStoredPosts, type PostDraft } from "./postsStorage"
 import { communities, readJoinedCommunityIds, writeJoinedCommunityIds, type Community } from "./communityStorage"
+import { formatCommunityMessageTime, readCommunityMessages, writeCommunityMessages } from "./communityMessagesStorage"
 
 export function CommunitiesPage({ session, onLogout }: { session: AuthSession; onLogout: () => void }) {
   const [query, setQuery] = useState("")
@@ -55,11 +57,44 @@ function CommunityCard({ item, joined, onToggle, session }: { item: Community; j
   </article></Localized>
 }
 
+type CommunityComment = { founderId?: string; initials: string; name: string; text: string; time: string }
+type CommunityDiscussion = {
+  id: string
+  founderId?: string
+  initials: string
+  name: string
+  title: string
+  excerpt: string
+  time: string
+  helpful: number
+  comments: CommunityComment[]
+  liked: boolean
+  image: string
+  postId?: string
+  authorAccountId?: string
+}
+
 const discussions = [
-  { initials: "TA", name: "Thiri Aung", title: "What our first 10 customers taught us", excerpt: "The best feedback came from watching how people actually used what we built.", time: "2h", helpful: 35, comments: [{ initials: "MK", name: "Min Khant", text: "This was true for us too. Observation gave us much better answers than surveys.", time: "1h" }] },
-  { initials: "KH", name: "Kaung Htet", title: "How are founders handling logistics outside Yangon?", excerpt: "Would love to hear what has worked for teams serving customers across regions.", time: "4h", helpful: 21, comments: [] },
-  { initials: "HH", name: "Hnin Htet", title: "Recommendations for local payment integrations", excerpt: "Looking for reliable options that are easy for small teams to manage.", time: "Yesterday", helpful: 17, comments: [] },
+  { founderId: "6", initials: "EM", name: "Ei Ei Mon", title: "What our first 10 customers taught us", excerpt: "The best feedback came from watching how people actually used what we built.", time: "2h", helpful: 35, comments: [{ founderId: "8", initials: "SM", name: "Su Myat", text: "This was true for us too. Observation gave us much better answers than surveys.", time: "1h" }] },
+  { founderId: "7", initials: "KH", name: "Kaung Htet", title: "How are founders handling logistics outside Yangon?", excerpt: "Would love to hear what has worked for teams serving customers across regions.", time: "4h", helpful: 21, comments: [] },
+  { founderId: "5", initials: "KZ", name: "Kyaw Zin Htet", title: "Recommendations for local payment integrations", excerpt: "Looking for reliable options that are easy for small teams to manage.", time: "Yesterday", helpful: 17, comments: [] },
 ]
+
+const memberFounderIds: Record<string, string[]> = {
+  "1": ["1", "5", "6", "7", "8"],
+  "2": ["5", "6", "7", "9", "10"],
+  "3": ["2", "6", "8", "9", "10"],
+  "4": ["1", "4", "5", "7", "9"],
+  "5": ["2", "3", "4", "8", "9"],
+  "6": ["1", "2", "5", "6", "7"],
+}
+
+function getFounderProfileHref(name: string, founderId?: string) {
+  const founder = founderId
+    ? founders.find(item => item.id === founderId)
+    : founders.find(item => item.name === name)
+  return founder ? `/founder/${founder.id}` : null
+}
 
 export function CommunityDetailPage({ session, onLogout, communityId }: { session: AuthSession; onLogout: () => void; communityId: string }) {
   const community = communities.find(item => item.id === communityId)
@@ -80,24 +115,29 @@ export function CommunityDetailPage({ session, onLogout, communityId }: { sessio
       return { posts: [] as PostDraft[], error: "Saved community posts could not be loaded." }
     }
   })
-  const [discussionItems, setDiscussionItems] = useState(() => {
+  const [discussionItems, setDiscussionItems] = useState<CommunityDiscussion[]>(() => {
     const savedDiscussions = savedPostState.posts
       .filter(post => post.community === community?.name)
       .map((post, index) => ({
         id: post.id ?? `saved-${index}-${post.title}`,
+        founderId: founders.find(founder => founder.name === (post.authorName ?? session.name))?.id,
         initials: post.authorInitials ?? initials,
         name: post.authorName ?? session.name,
         title: post.title,
         excerpt: post.body,
         time: "Posted",
         helpful: 0,
-        comments: [] as { initials: string; name: string; text: string; time: string }[],
+        comments: [] as CommunityComment[],
         liked: false,
         image: post.image ?? "",
         postId: post.id,
         authorAccountId: post.authorAccountId,
       }))
     return [...savedDiscussions, ...discussions.map((discussion, index) => ({ ...discussion, id: `discussion-${index}`, liked: false, image: "", postId: undefined, authorAccountId: undefined }))]
+  })
+  const communityMembers = (memberFounderIds[communityId] ?? []).flatMap(id => {
+    const founder = founders.find(item => item.id === id)
+    return founder ? [founder] : []
   })
   const [composerOpen, setComposerOpen] = useState(false)
   const [editingPost, setEditingPost] = useState<PostDraft | null>(null)
@@ -106,6 +146,14 @@ export function CommunityDetailPage({ session, onLogout, communityId }: { sessio
   const [postError, setPostError] = useState(savedPostState.error)
   const [commentDraft, setCommentDraft] = useState("")
   const [openComments, setOpenComments] = useState<string | null>(null)
+  const [chatDraft, setChatDraft] = useState("")
+  const [chatState, setChatState] = useState(() => {
+    try {
+      return { messages: community ? readCommunityMessages(session.accountId, community.id) : [], error: "" }
+    } catch {
+      return { messages: [], error: "Community messages could not be loaded." }
+    }
+  })
 
   function closeComposer() {
     setComposerOpen(false)
@@ -152,6 +200,7 @@ export function CommunityDetailPage({ session, onLogout, communityId }: { sessio
     setPostError("")
     if (post.community === community?.name) setDiscussionItems(current => [{
       id,
+      founderId: founders.find(founder => founder.name === session.name)?.id,
       initials,
       name: session.name,
       title: post.title,
@@ -228,9 +277,32 @@ export function CommunityDetailPage({ session, onLogout, communityId }: { sessio
     const text = commentDraft.trim()
     if (!text) return
     setDiscussionItems(current => current.map(item => item.id === discussionId
-      ? { ...item, comments: [...item.comments, { initials, name: session.name, text, time: "Just now" }] }
+      ? { ...item, comments: [...item.comments, { founderId: founders.find(founder => founder.name === session.name)?.id, initials, name: session.name, text, time: "Just now" }] }
       : item))
     setCommentDraft("")
+  }
+
+  function sendCommunityMessage(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    const text = chatDraft.trim()
+    if (!text || !community) return
+
+    const message = {
+      id: `message-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      accountId: session.accountId,
+      authorName: session.name,
+      authorInitials: initials,
+      text,
+      createdAt: new Date().toISOString(),
+    }
+    try {
+      const messages = [...readCommunityMessages(session.accountId, community.id), message]
+      writeCommunityMessages(session.accountId, community.id, messages)
+      setChatState({ messages, error: "" })
+      setChatDraft("")
+    } catch {
+      setChatState(current => ({ ...current, error: "Your message could not be sent. Please try again." }))
+    }
   }
 
   return <MemberShell session={session} onLogout={onLogout} active="Communities">
@@ -276,11 +348,12 @@ export function CommunityDetailPage({ session, onLogout, communityId }: { sessio
               {postError && <p className="community-post-error" role="alert">{postError}</p>}
               <div className="community-discussion-list">{discussionItems.map(discussion => {
                 const isOwnPost = Boolean(discussion.postId && (discussion.authorAccountId === session.accountId || (!discussion.authorAccountId && discussion.name === session.name)))
+                const authorHref = getFounderProfileHref(discussion.name, discussion.founderId)
                 return <article className="community-discussion" key={discussion.id}>
-                <span className="community-discussion-avatar">{discussion.initials}</span>
+                {authorHref ? <AppLink href={authorHref} className="community-discussion-profile-link"><span className="community-discussion-avatar">{discussion.initials}</span></AppLink> : <span className="community-discussion-avatar">{discussion.initials}</span>}
                 <div className="community-discussion-copy">
                   <div className="community-discussion-topline">
-                    <div className="community-discussion-author"><strong>{discussion.name}</strong><span>{discussion.time}</span></div>
+                    <div className="community-discussion-author">{authorHref ? <AppLink href={authorHref}><strong>{discussion.name}</strong></AppLink> : <strong>{discussion.name}</strong>}<span>{discussion.time}</span></div>
                     {isOwnPost && <div className="post-menu-wrap community-discussion-menu">
                       <button type="button" aria-label="Your post actions" aria-expanded={postMenuOpenId === discussion.id} onClick={() => setPostMenuOpenId(current => current === discussion.id ? null : discussion.id)}>•••</button>
                       {postMenuOpenId === discussion.id && <div className="post-menu"><button type="button" onClick={() => {
@@ -303,7 +376,10 @@ export function CommunityDetailPage({ session, onLogout, communityId }: { sessio
                     <button type="button" aria-expanded={openComments === discussion.id} onClick={() => setOpenComments(current => current === discussion.id ? null : discussion.id)}><Icon name="comment" />Comment</button>
                   </div>
                   {openComments === discussion.id && <div className="community-comments">
-                    {discussion.comments.map((comment, index) => <div className="community-comment" key={`${comment.name}-${index}`}><span className="community-comment-avatar">{comment.initials}</span><div><strong>{comment.name}</strong><p>{comment.text}</p><small>{comment.time}</small></div></div>)}
+                    {discussion.comments.map((comment, index) => {
+                      const commentHref = getFounderProfileHref(comment.name, comment.founderId)
+                      return <div className="community-comment" key={`${comment.name}-${index}`}>{commentHref ? <AppLink href={commentHref} className="community-comment-profile"><span className="community-comment-avatar">{comment.initials}</span></AppLink> : <span className="community-comment-avatar">{comment.initials}</span>}<div><strong>{commentHref ? <AppLink href={commentHref}>{comment.name}</AppLink> : comment.name}</strong><p>{comment.text}</p><small>{comment.time}</small></div></div>
+                    })}
                     <form className="community-comment-form" onSubmit={event => addComment(event, discussion.id)}>
                       <span className="community-comment-avatar">{initials}</span>
                       <input aria-label="Add a thoughtful comment" placeholder="Add a thoughtful comment..." value={openComments === discussion.id ? commentDraft : ""} onChange={event => setCommentDraft(event.target.value)} required />
@@ -319,16 +395,18 @@ export function CommunityDetailPage({ session, onLogout, communityId }: { sessio
             {activeTab === "Chat" && <section className="community-tab-panel community-chat-panel">
               <header><div><span className="community-detail-eyebrow">Member conversations</span><h2>Community chat</h2><p>Quick conversations with founders in this community.</p></div><span className="community-chat-count">3 new</span></header>
               <div className="community-chat-thread"><span className="community-chat-day">Today</span>
-                <article><span className="community-member-avatar">MK</span><div><strong>Min Khant</strong><p>Has anyone here built a simple handover checklist for a first sales hire?</p><small>9:14 AM</small></div></article>
-                <article><span className="community-member-avatar">EM</span><div><strong>Ei Ei Mon</strong><p>The most useful part was a weekly customer context note, not the pipeline template.</p><small>9:18 AM</small></div></article>
+                <article><AppLink href="/founder/8" className="community-chat-profile"><span className="community-member-avatar">SM</span></AppLink><div><strong><AppLink href="/founder/8">Su Myat</AppLink></strong><p>Has anyone here built a simple handover checklist for a first sales hire?</p><small>9:14 AM</small></div></article>
+                <article><AppLink href="/founder/6" className="community-chat-profile"><span className="community-member-avatar">EM</span></AppLink><div><strong><AppLink href="/founder/6">Ei Ei Mon</AppLink></strong><p>The most useful part was a weekly customer context note, not the pipeline template.</p><small>9:18 AM</small></div></article>
                 <article className="community-chat-own"><span className="community-member-avatar">{initials}</span><div><strong>{session.name}</strong><p>We can share a clean version with the group.</p><small>9:23 AM</small></div></article>
+                {chatState.messages.map(message => <article className="community-chat-own" key={message.id}><span className="community-member-avatar">{message.authorInitials}</span><div><strong>{message.authorName}</strong><p>{message.text}</p><small>{formatCommunityMessageTime(message.createdAt)}</small></div></article>)}
               </div>
-              <form className="community-chat-compose" onSubmit={event => event.preventDefault()}><input aria-label="Write a message" placeholder="Write a message..." /><button type="submit" aria-label="Send message"><Icon name="arrow" /></button></form>
+              {chatState.error && <p className="community-post-error" role="alert">{chatState.error}</p>}
+              <form className="community-chat-compose" onSubmit={sendCommunityMessage}><input aria-label="Write a message" placeholder="Write a message..." value={chatDraft} onChange={event => setChatDraft(event.target.value)} /><button type="submit" aria-label="Send message" disabled={!chatDraft.trim()}><Icon name="arrow" /></button></form>
             </section>}
             {activeTab === "Members" && <section className="community-tab-panel community-members-panel">
               <header><div><span className="community-detail-eyebrow">Meet your peers</span><h2>Community members</h2><p>Connect with founders building across industries and cities.</p></div><label><Icon name="search" /><input placeholder="Search members..." aria-label="Search members" /></label></header>
               <div className="community-member-table"><div className="community-member-table-head"><span>Founder</span><span>Business &amp; role</span><span>Location</span><span>Industry</span></div>
-                {[["TA", "Thiri Aung", "Thanlwin Labs", "Founder & Product Lead", "Yangon", "Technology"], ["MK", "Min Khant", "MyanMarket", "Co-founder", "Mandalay", "E-commerce"], ["EM", "Ei Ei Mon", "Thazin Learning", "Founder", "Taunggyi", "Education"], ["KH", "Kaung Htet", "Ayer Logistics", "Founder & CEO", "Bago", "Logistics"], ["SM", "Su Myat", "Lotus Health", "Co-founder", "Yangon", "Health"]].map(([initial, name, business, role, location, industry]) => <article key={name}><span className="community-table-person"><span className="community-member-avatar">{initial}</span><strong>{name}</strong></span><span><strong>{business}</strong><small>{role}</small></span><span>{location}</span><span className="community-member-tag">{industry}</span></article>)}
+                {communityMembers.map(founder => <article key={founder.id}><AppLink href={`/founder/${founder.id}`} className="community-table-person"><span className="community-member-avatar">{founder.name.split(/\s+/).map(part => part[0]).slice(0, 2).join("")}</span><strong>{founder.name}</strong></AppLink><span><strong>{founder.company}</strong><small>{founder.role}</small></span><span>{founder.location}</span><span className="community-member-tag">{founder.industry}</span></article>)}
               </div>
             </section>}
             {activeTab === "About" && <section className="community-tab-panel community-about-panel">

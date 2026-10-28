@@ -17,6 +17,9 @@ const burmese: Record<string, string> = {
   About: "ကျွန်ုပ်တို့အကြောင်း",
   Contact: "ဆက်သွယ်ရန်",
   Login: "ဝင်ရောက်ရန်",
+  "Business registration": "လုပ်ငန်း မှတ်ပုံတင်ခြင်း",
+  "Become a founder": "လုပ်ငန်းတည်ထောင်သူ ဖြစ်လာရန်",
+  "My account": "ကျွန်ုပ်၏ အကောင့်",
   "Close menu": "မီနူးပိတ်ရန်",
   "Open menu": "မီနူးဖွင့်ရန်",
 "Your trusted source for verified business founders and authentic entrepreneurial profiles.":
@@ -356,6 +359,36 @@ const burmese: Record<string, string> = {
     "သင့်အချက်အလက်များကို ကုဒ်ဝှက်ထားပြီး လုံခြုံစွာ သိမ်းဆည်းထားပါသည်။",
   "The email or password is incorrect.": "အီးမေးလ် သို့မဟုတ် စကားဝှက် မှားယွင်းနေပါသည်။",
   "Account created. Sign in to continue.": "အကောင့်ဖွင့်ပြီးပါပြီ။ ဆက်လက်ရန် ဝင်ရောက်ပါ။",
+  "Quick account setup": "အကောင့် အမြန်ဖွင့်ခြင်း",
+  "Create your account": "သင့်အကောင့် ဖန်တီးရန်",
+  "Set up your sign-in details now. You can complete your founder profile and business application later.":
+    "ယခု အကောင့်ဝင်ရန် အချက်အလက်များကို သတ်မှတ်ပါ။ တည်ထောင်သူကိုယ်ရေးအကျဉ်းနှင့် လုပ်ငန်းလျှောက်လွှာကို နောက်မှ ဖြည့်စွက်နိုင်ပါသည်။",
+  "Create your account first. Add a founder profile or apply for business verification whenever you’re ready.":
+    "အရင်ဆုံး အကောင့်ဖွင့်ပါ။ အဆင်သင့်ဖြစ်သည့်အခါ တည်ထောင်သူကိုယ်ရေးအကျဉ်း ဖြည့်ခြင်း သို့မဟုတ် လုပ်ငန်းစိစစ်အတည်ပြုရန် လျှောက်ထားခြင်း ပြုလုပ်နိုင်ပါသည်။",
+  "Enter your email address": "သင့်အီးမေးလ်လိပ်စာကို ရိုက်ထည့်ပါ",
+  "Already have an account?": "အကောင့်ရှိပြီးသားလား။",
+  "Start business registration": "လုပ်ငန်းမှတ်ပုံတင်ခြင်း စတင်ရန်",
+  "Apply to verify your business": "သင့်လုပ်ငန်းကို စိစစ်အတည်ပြုရန် လျှောက်ထားပါ",
+  "Share your business details and choose a supporting document. Your application is private.":
+    "လုပ်ငန်းအချက်အလက်များ ဖြည့်ပြီး အထောက်အထားစာရွက်စာတမ်းတစ်ခု ရွေးပါ။ သင့်လျှောက်လွှာကို သီးသန့်ထားရှိပါမည်။",
+  "Documents & submit": "စာရွက်စာတမ်းများနှင့် တင်သွင်းရန်",
+  Documents: "စာရွက်စာတမ်းများ",
+  "Account & submit": "အကောင့်နှင့် တင်သွင်းရန်",
+  Continue: "ဆက်လုပ်ရန်",
+  "Submit application": "လျှောက်လွှာ တင်သွင်းရန်",
+  "Create account & submit": "အကောင့်ဖွင့်ပြီး တင်သွင်းရန်",
+  "Application prepared": "လျှောက်လွှာ ပြင်ဆင်ပြီးပါပြီ",
+  "Go to your account": "သင့်အကောင့်သို့ သွားရန်",
+  "Business location": "လုပ်ငန်းတည်နေရာ",
+  "PDF, PNG, or JPG · prototype records the filename only":
+    "PDF, PNG သို့မဟုတ် JPG · စမ်းသပ်ဗားရှင်းတွင် ဖိုင်အမည်ကိုသာ မှတ်တမ်းတင်ပါသည်",
+  "This prototype only records the selected filename. It does not upload documents or send an application.":
+    "ဤစမ်းသပ်ဗားရှင်းတွင် ရွေးချယ်ထားသော ဖိုင်အမည်ကိုသာ မှတ်တမ်းတင်ပါသည်။ စာရွက်စာတမ်းများကို အမှန်တကယ်တင်ခြင်း သို့မဟုတ် လျှောက်လွှာပေးပို့ခြင်း မပြုပါ။",
+  "Create an account to save this application. Already registered?":
+    "ဤလျှောက်လွှာကို သိမ်းဆည်းရန် အကောင့်ဖွင့်ပါ။ အကောင့်ရှိပြီးသားလား။",
+  "Sign in and continue": "ဝင်ရောက်ပြီး ဆက်လုပ်ရန်",
+  "Your business application is saved in this browser prototype. No documents or application details have been sent to a review team.":
+    "သင့်လုပ်ငန်းလျှောက်လွှာကို ဤဘရောက်ဇာ စမ်းသပ်ဗားရှင်းတွင် သိမ်းဆည်းထားပါသည်။ စာရွက်စာတမ်း သို့မဟုတ် လျှောက်လွှာအချက်အလက်များကို စိစစ်ရေးအဖွဲ့ထံ ပေးပို့ထားခြင်း မရှိပါ။",
   Personal: "ကိုယ်ရေးကိုယ်တာ",
   Business: "လုပ်ငန်း",
   Community: "အသိုင်းအဝိုင်း",
