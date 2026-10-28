@@ -176,7 +176,7 @@ export function DirectoryPage() {
               </div>
               <div className="directory-profile-footer">
                 <span className="directory-profile-category">{category}</span>
-                <span className="directory-profile-action">{tab === "founders" ? "View profile" : "View business"}<span className="directory-profile-arrow"><Icon name="arrow" /></span></span>
+                <span className="directory-profile-action"><span>{tab === "founders" ? "View profile" : "View business"}</span><span className="directory-profile-arrow"><Icon name="arrow" /></span></span>
               </div>
             </AppLink>
           })}</div> : <div className="directory-empty-state"><span><Icon name="search" /></span><h2>No results found</h2><p>Try changing your search or clearing one or more filters.</p><button type="button" onClick={clearFilters}>Clear filters</button></div>}

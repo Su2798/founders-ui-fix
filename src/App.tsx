@@ -10,7 +10,7 @@ import { HomePage } from "./pages/public/HomePage"
 import { VerificationPage } from "./pages/public/VerificationPage"
 import { AccountVerificationPage } from "./pages/account/AccountVerificationPage"
 import { BusinessesPage } from "./pages/account/BusinessesPage"
-import { CommunitiesPage } from "./pages/account/CommunitiesPage"
+import { CommunitiesPage, CommunityDetailPage } from "./pages/account/CommunitiesPage"
 import { DashboardPage } from "./pages/account/DashboardPage"
 import { MessagesPage } from "./pages/account/MessagesPage"
 import { PostsPage } from "./pages/account/PostsPage"
@@ -33,6 +33,7 @@ function readSession(): AuthSession | null { try { const value = localStorage.ge
 export default function App() {
   const pathname = window.location.pathname.replace(/\/+$/, "") || "/home"
   const accountRoute = parseAccountPath(pathname)
+  const communityDetailRoute = pathname.match(/^\/([^/]+)\/communities\/([^/]+)$/)
   const activePath = navItems.some(([, href]) => href === pathname) ? pathname : "/home"
   const [session, setSession] = useState<AuthSession | null>(readSession)
   const [loginMessage, setLoginMessage] = useState(() => new URLSearchParams(window.location.search).get("registered") === "1" ? "Account created. Sign in to continue." : "")
@@ -79,6 +80,16 @@ export default function App() {
 
   function logout() { localStorage.removeItem(AUTH_SESSION_KEY); setSession(null); window.location.assign("/home") }
   useEffect(() => {
+    if (communityDetailRoute) {
+      if (!session) {
+        window.location.replace("/login")
+        return
+      }
+      if (communityDetailRoute[1] !== getAccountSlug(session)) {
+        window.location.replace(`${getAccountPath(session, "communities")}/${communityDetailRoute[2]}`)
+      }
+      return
+    }
     const legacySection = accountSections.find(section => pathname === `/${section}` && section !== "verification")
     if (legacySection) {
       window.location.replace(session ? getAccountPath(session, legacySection) : "/login")
@@ -92,7 +103,7 @@ export default function App() {
     if (accountRoute.slug !== getAccountSlug(session)) {
       window.location.replace(getAccountPath(session, accountRoute.section))
     }
-  }, [accountRoute?.slug, accountRoute?.section, pathname, session])
+  }, [accountRoute?.slug, accountRoute?.section, communityDetailRoute?.[1], communityDetailRoute?.[2], pathname, session])
 
   let page
   if (accountRoute?.section === "dashboard") page = session ? <DashboardPage session={session} onLogout={logout} /> : null
@@ -126,6 +137,9 @@ export default function App() {
   }
   if (accountRoute?.section === "settings" && session) {
     return <SettingsPage session={session} onLogout={logout} />
+  }
+  if (communityDetailRoute && session) {
+    return <CommunityDetailPage session={session} onLogout={logout} communityId={communityDetailRoute[2]} />
   }
   if (pathname === "/register") return <RegisterPage onSubmit={register} message={registerMessage} />
 

@@ -1,14 +1,16 @@
 import { AnchorHTMLAttributes, ReactNode } from "react"
 
-export type IconName = "arrow" | "building" | "check" | "database" | "document" | "login" | "menu" | "search" | "shield" | "sparkles" | "user" | "x"
+export type IconName = "arrow" | "building" | "check" | "comment" | "database" | "document" | "heart" | "login" | "menu" | "search" | "shield" | "sparkles" | "user" | "x"
 
 export function Icon({ name, className = "size-5" }: { name: IconName; className?: string }) {
   const paths: Record<IconName, ReactNode> = {
     arrow: <><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></>,
     building: <><path d="M3 21h18" /><path d="M6 21V5l6-2v18" /><path d="M18 21V9l-6-2" /><path d="M9 9h.01M9 13h.01M9 17h.01M15 13h.01M15 17h.01" /></>,
     check: <><circle cx="12" cy="12" r="9" /><path d="m8.5 12 2.2 2.2 4.8-5" /></>,
+    comment: <><path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.5 9.2 9.2 0 0 1-4-.9L3 21l1.9-4.8a9.2 9.2 0 0 1-.9-4A8.4 8.4 0 0 1 12.5 3.7a8.4 8.4 0 0 1 8.5 7.8Z" /><path d="M8 12h.01M12 12h.01M16 12h.01" strokeWidth="2.8" /></>,
     database: <><ellipse cx="12" cy="5" rx="8" ry="3" /><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5" /><path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6" /></>,
     document: <><path d="M6 3h8l4 4v14H6z" /><path d="M14 3v5h5M9 13l2 2 4-4" /></>,
+    heart: <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z" />,
     login: <><path d="M10 17l5-5-5-5" /><path d="M15 12H3" /><path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7" /></>,
     menu: <><path d="M4 7h16M4 12h16M4 17h16" /></>,
     search: <><circle cx="11" cy="11" r="7" /><path d="m16 16 4 4" /></>,

@@ -26,6 +26,7 @@ export function BusinessProfilePage({ businessId }: { businessId: string }) {
       const initials = founder.company.split(/\s+/).map(part => part[0]).slice(0, 2).join("")
       const founderInitials = founder.name.split(/\s+/).map(part => part[0]).slice(0, 2).join("")
       return <>
+        <AppLink href="/directory" className="public-profile-back"><Icon name="arrow" />Back to directory</AppLink>
         <header className="public-business-header">
           <span className="public-business-avatar">{initials}</span>
           <div className="public-business-heading">
