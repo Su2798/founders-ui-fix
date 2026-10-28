@@ -306,17 +306,25 @@
 .register-private-note svg { width: 18px; height: 18px; flex: 0 0 auto; }
 @media (max-width: 767px) {
   .register-wizard { grid-template-columns: 1fr; }
-  .register-story { min-height: auto; padding: 18px 22px; }
-  .register-story-copy { margin-block: 28px 8px; padding-block: 0; }
-  .register-story-copy h1 { margin: 15px 0 8px; font-size: clamp(28px, 8vw, 42px); }
-  .register-story-copy p { font-size: 12px; }
+  .register-story { min-height: 0; padding: 14px 20px; flex-direction: row; align-items: center; gap: 12px; }
+  .register-story-copy { margin: 0; padding: 0; }
+  .register-story-copy > span { padding: 5px 9px; font-size: 10px; white-space: nowrap; }
+  .register-story-copy h1, .register-story-copy p { display: none; }
   .register-story blockquote { display: none; }
-  .register-workspace { min-height: auto; padding: 24px 20px 36px; }
-  .register-progress { margin-bottom: 32px; }
+  .register-workspace { width: 100%; min-height: calc(100svh - 54px); padding: 24px 20px max(32px, env(safe-area-inset-bottom)); }
+  .register-content { width: 100%; }
+  .register-progress { margin-bottom: 28px; }
   .register-progress small { max-width: 72px; font-size: 9px; }
+  .register-step-heading { margin-bottom: 24px; }
+  .register-account-form { width: 100%; max-width: 480px; margin-inline: auto; }
+  .register-account-form .register-primary { width: 100%; }
   .register-field-grid { gap: 13px; }
 }
 @media (max-width: 420px) {
+  .register-story { padding-inline: 16px; }
+  .register-workspace { padding: 20px 16px max(28px, env(safe-area-inset-bottom)); }
+  .register-progress { margin-bottom: 24px; }
+  .register-progress small { max-width: 64px; font-size: 8px; }
   .register-field-grid { grid-template-columns: 1fr; }
   .register-field-wide { grid-column: auto; }
   .register-step-heading h2 { font-size: 25px; }
